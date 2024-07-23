@@ -1,0 +1,46 @@
+ConfigName styles
+
+Import "css"
+
+ConfigElement html
+    _Type = "Tag"
+    Height = "100%"
+endConfigElement
+
+ConfigElement body
+    _Type = "Tag"
+    Display = "flex"
+    Height = "100%"
+    BackgroundColor = "#0a0a0a"
+    Margin = 0.5
+    Padding = 0
+endConfigElement
+
+ConfigElement main
+    _Type = "Id"
+    Margin = "auto"
+    TextAlign = "center"
+    Color = "#fcfcfc"
+    Border = "1px solid #fcfcfc"
+    BorderRadius = "5px"
+    Padding = "25px 70px"
+endConfigElement
+
+ConfigElement logo
+    _Type = "Id"
+    Width = "150px"
+endConfigElement
+
+ConfigElement PoppinsRegular
+    _Type = "Class"
+    FontFamily = "'Poppins', sans-serif"
+    FontWeight = 400
+    FontStyle = "normal"
+endConfigElement
+
+ConfigElement PoppinsSemiBold
+    _Type = "Class"
+    FontFamily = "'Poppins', sans-serif"
+    FontWeight = 600
+    FontStyle = "normal"
+endConfigElement

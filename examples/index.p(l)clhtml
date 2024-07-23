@@ -1,0 +1,106 @@
+ConfigName index
+
+ConfigElement Doctype
+    Content = "html"
+endConfigElement
+
+ConfigElement Html
+    ConfigList Elements
+        ConfigListElement 0
+            ConfigElement Head
+                ConfigList Elements
+                    ConfigListElement 0
+                        ConfigElement Title
+                            ConfigList Elements
+                                ConfigListElement 0
+                                    ConfigElement _Text
+                                        Content = "example"
+                                    endConfigElement
+                                endConfigListElement
+                            endConfigList
+                        endConfigElement
+                    endConfigListElement
+                    ConfigListElement 1
+                        ConfigElement Link
+                            Rel = "preconnect"
+                            Href = "https://fonts.googleapis.com"
+                        endConfigElement
+                    endConfigListElement
+                    ConfigListElement 2
+                        ConfigElement Link
+                            Rel = "preconnect"
+                            Href = "https://fonts.gstatic.com"
+                            Preconnect = True
+                        endConfigElement
+                    endConfigListElement
+                    ConfigListElement 3
+                        ConfigElement Link
+                            Rel = "preconnect"
+                            Href = "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+                            Preconnect = True
+                        endConfigElement
+                    endConfigListElement
+                    ConfigListElement 4
+                        ConfigElement Link
+                            Rel = "stylesheet"
+                            Href = "styles.css"
+                        endConfigElement
+                    endConfigListElement
+                endConfigList
+            endConfigElement
+        endConfigListElement
+        ConfigListElement 1
+            ConfigElement Body
+                Class = "PoppinsRegular"
+                ConfigList Elements
+                    ConfigListElement 0
+                        ConfigElement Div
+                            Id = "main"
+                            ConfigList Elements
+                                ConfigListElement 0
+                                    ConfigElement Img
+                                        Id = "logo"
+                                        Src = "logo.webp"
+                                        Alt = "logo"
+                                    endConfigElement
+                                endConfigListElement
+                                ConfigListElement 1
+                                    ConfigElement H1
+                                        Class = "PoppinsSemiBold"
+                                        ConfigList Elements
+                                            ConfigListElement 0
+                                                ConfigElement _Text
+                                                    Content = "Example Website"
+                                                endConfigElement
+                                            endConfigListElement
+                                        endConfigList
+                                    endConfigElement
+                                endConfigListElement
+                                ConfigListElement 2
+                                    ConfigElement P
+                                        ConfigList Elements
+                                            ConfigListElement 0
+                                                ConfigElement _Text
+                                                    Content = "This is a minimal example website in P(L)CL with P(L)CLToWeb"
+                                                endConfigElement
+                                            endConfigListElement
+                                            ConfigListElement 1 
+                                                ConfigElement Br
+                                                endConfigElement
+                                            endConfigListElement 
+                                            ConfigListElement 2
+                                                ConfigElement _Text
+                                                    Content = "It works! It's a sliiiight nightmare but it does work"
+                                                endConfigElement
+                                            endConfigListElement
+                                        endConfigList
+                                    endConfigElement
+                                endConfigListElement
+                            endConfigList
+                        endConfigElement
+                    endConfigListElement
+                endConfigList
+            endConfigElement
+        endConfigListElement
+    endConfigList
+endConfigElement
