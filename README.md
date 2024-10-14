@@ -8,7 +8,7 @@ Why does this exist? No one stopped me.
 
 - [ ] Generate templates for validation
 - [ ] Probably write better documentation
-- [ ] Allow for non-minified output
+- [x] Allow for non-minified output
 
 ## Special Elements & Attributes
 

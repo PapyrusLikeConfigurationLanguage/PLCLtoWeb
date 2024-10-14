@@ -2,7 +2,7 @@
 
 #include "CSS.hpp"
 
-std::string elementInsideHelper(const Config::ConfigElement &input) {
+std::string elementInsideHelper(const Config::ConfigElement &input, bool minify, size_t indent) {
     std::string result;
     for (const auto &attribute : input.attributes) {
         if (attribute->name[0] == '_') {
@@ -17,7 +17,13 @@ std::string elementInsideHelper(const Config::ConfigElement &input) {
             }
         }
         std::ranges::transform(newName, newName.begin(), ::tolower);
+        if (!minify) {
+            result += std::string(indent, ' ');
+        }
         result += newName + ":";
+        if (!minify) {
+            result += " ";
+        }
         if (std::holds_alternative<std::string>(attribute->value)) {
             result += std::get<std::string>(attribute->value);
         } else if (std::holds_alternative<int64_t>(attribute->value)) {
@@ -28,11 +34,14 @@ std::string elementInsideHelper(const Config::ConfigElement &input) {
             result += std::to_string(std::get<bool>(attribute->value));
         }
         result += ";";
+        if (!minify) {
+            result += "\n";
+        }
     }
     return result;
 }
 
-std::string elementHelper(const Config::ConfigElement &input, const std::string_view& name, const std::map<std::string, std::string> &templates) {
+std::string elementHelper(const Config::ConfigElement &input, const std::string_view& name, const std::map<std::string, std::string> &templates, bool minify, size_t indent) {
     std::string result;
     std::string afterMain;
     std::string type;
@@ -68,16 +77,20 @@ std::string elementHelper(const Config::ConfigElement &input, const std::string_
     }
 
     if (Generic::iequals(input.type, "_all")) {
-        result += "*{";
+        result += "*";
+        if (!minify) {
+            result += " ";
+        }
+        result += "{";
     } else {
-        result += input.type + "{";
+        result += input.type + (!minify ? " " : "") + "{" + (!minify ? "\n" : "");
     }
     for (const auto &list : input.lists) {
         if (Generic::iequals(list->type, "_pseudoelements")) {
             for (const auto &element : list->elements) {
                 Config::ConfigElement *newElement = element->element;
                 newElement->type = input.type + "::" + newElement->type;
-                afterMain += elementHelper(*newElement, name, templates);
+                afterMain += elementHelper(*newElement, name, templates, minify, indent);
             }
         }
         if (Generic::iequals(list->type, "_pseudoclasses")) {
@@ -86,7 +99,7 @@ std::string elementHelper(const Config::ConfigElement &input, const std::string_
                 newElement->type = input.type + ":" + newElement->type;
                 auto newAttribute = Config::ConfigElementAttribute("_type", type);
                 newElement->attributes.push_back(&newAttribute);
-                afterMain += elementHelper(*newElement, name, templates);
+                afterMain += elementHelper(*newElement, name, templates, minify, indent);
             }
         }
         if (Generic::iequals(list->type, "_templates")) {
@@ -119,27 +132,29 @@ std::string elementHelper(const Config::ConfigElement &input, const std::string_
             }
         }
     }
-    result += elementInsideHelper(input);
+    result += elementInsideHelper(input, minify, indent);
     result += "}";
+    if (!minify) {
+        result += "\n";
+    }
     result += afterMain;
     return result;
 }
 
-std::string parseCSS(const Config::ConfigRoot &input) {
+std::string parseCSS(const Config::ConfigRoot &input, bool minify, size_t indent) {
     std::map<std::string, std::string> templates;
     std::string result;
     for (const auto &list : input.lists) {
         if (Generic::iequals(list->type, "_templates")) {
             for (const auto &element : list->elements) {
-                templates.emplace(element->element->type, elementInsideHelper(*element->element));
-                //templates[element->element->type] = elementInsideHelper(*element->element);
+                templates.emplace(element->element->type, elementInsideHelper(*element->element, minify, indent));
             }
             continue;
         }
         std::cerr << "(" << input.name << ")" << " Unknown list type: " << list->type << std::endl;
     }
     for (const auto &element : input.elements) {
-        result += elementHelper(*element, input.name, templates);
+        result += elementHelper(*element, input.name, templates, minify, indent);
     }
     return result;
 }

@@ -28,10 +28,14 @@ std::string attributeHelper(const std::vector<Config::ConfigElementAttribute*> &
     return result;
 }
 
-std::string listHelper(const Config::ConfigList& list, const std::string_view& name) {
+std::string listHelper(const Config::ConfigList& list, const std::string_view& name, bool minify, size_t indent, size_t indentStart) {
     std::string result;
     for (auto &element : list.elements) {
         if (Generic::iequals(element->element->type, "_text")) {
+            if (!minify) {
+                result += "\n";
+                result += std::string(indentStart, ' ');
+            }
             if (element->element->attributes.empty()) {
                 std::cerr << "(" << name << ")" << " _Text pseudo-elements should have the \"Content\" attribute" << std::endl;
             }
@@ -54,16 +58,24 @@ std::string listHelper(const Config::ConfigList& list, const std::string_view& n
         } else {
             std::string lowercaseType = element->element->type;
             std::ranges::transform(lowercaseType, lowercaseType.begin(), ::tolower);
+            if (!minify) {
+                result += "\n";
+                result += std::string(indentStart, ' ');
+            }
             result += "<" + lowercaseType;
             if (!element->element->attributes.empty())
                 result += attributeHelper(element->element->attributes);
             result += ">";
             if (!element->element->lists.empty()) {
                 for (const auto &innerList : element->element->lists) {
-                    result += listHelper(*innerList, name);
+                    result += listHelper(*innerList, name, minify, indent, indentStart + indent);
                 }
             }
             if (std::ranges::find(VOID_ELEMENTS, lowercaseType) == std::end(VOID_ELEMENTS)) {
+                if (!minify) {
+                    result += "\n";
+                    result += std::string(indentStart, ' ');
+                }
                 result += "</" + lowercaseType + ">";
             }
         }
@@ -71,7 +83,7 @@ std::string listHelper(const Config::ConfigList& list, const std::string_view& n
     return result;
 }
 
-std::string parseHTML(const Config::ConfigRoot &input) {
+std::string parseHTML(const Config::ConfigRoot &input, bool minify, size_t indent) {
     if (!input.lists.empty()) {
         std::cerr << "(" << input.name << ")" << " Lists shouldn't be present in the root of an P(L)CLHTML file" << std::endl;
     }
@@ -97,6 +109,9 @@ std::string parseHTML(const Config::ConfigRoot &input) {
                 if (Generic::iequals(attribute->name, "Content")) {
                     if (std::holds_alternative<std::string>(attribute->value)) {
                         result += "<!DOCTYPE " + std::get<std::string>(attribute->value) + ">";
+                        if (!minify) {
+                            result += "\n";
+                        }
                     } else {
                         std::cerr << "(" << input.name << ")" << " Doctype elements should have a string value" << std::endl;
                     }
@@ -117,7 +132,10 @@ std::string parseHTML(const Config::ConfigRoot &input) {
             }
             for (const auto &list : element->lists) {
                 if (Generic::iequals(list->type, "elements")) {
-                    result += listHelper(*list, input.name);
+                    result += listHelper(*list, input.name, minify, indent, indent);
+                    if (!minify) {
+                        result += "\n";
+                    }
                 } else {
                     std::cerr << "(" << input.name << ")" << " Unexpected list: " << list->type << std::endl;
                 }

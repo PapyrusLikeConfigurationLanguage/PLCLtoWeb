@@ -26,4 +26,4 @@ inline const std::string VOID_ELEMENTS[] = {
     "wbr"
 };
 
-std::string parseHTML(const Config::ConfigRoot &input);
+std::string parseHTML(const Config::ConfigRoot &input, bool minify, size_t indent);

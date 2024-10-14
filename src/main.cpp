@@ -17,6 +17,8 @@ struct Cli {
     std::string output = ".";
     bool help = false;
     bool version = false;
+    bool dontMinify = false;
+    size_t indent = 4;
 };
 
 int main(int argc, char *argv[]) {
@@ -37,7 +39,23 @@ int main(int argc, char *argv[]) {
                 cli.help = true;
             } else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--version") == 0) {
                 cli.version = true;
-            } else {
+            } else if (strcmp(argv[i], "--dont-minify") == 0) {
+                cli.dontMinify = true;
+            } else if (strcmp(argv[i], "-i") == 0 || strcmp(argv[i], "--indent") == 0) {
+                if (i + 1 < argc) {
+                    i++;
+                    if (std::isdigit(argv[i][0])) {
+                        cli.indent = std::stoul(argv[i]);
+                    } else {
+                        std::cerr << "Expected positive number after --indent" << std::endl;
+                        return 1;
+                    }
+                } else {
+                    std::cerr << "Expected indent after --indent" << std::endl;
+                    return 1;
+                }
+            }
+            else {
                 cli.files.emplace_back(argv[i]);
             }
         }
@@ -52,9 +70,11 @@ int main(int argc, char *argv[]) {
     if (cli.help) {
         std::cout << "Usage: " << argv[0] << " [options] [files...]" << '\n';
         std::cout << "Options:" << '\n';
-        std::cout << "  -o, --output <path>  Output directory" << '\n';
         std::cout << "  -h, --help  Display this information" << '\n';
+        std::cout << "  -o, --output <path>  Output directory" << '\n';
         std::cout << "  -v, --version  Display version information" << '\n';
+        std::cout << "  --dont-minify  Don't minify the output" << '\n';
+        std::cout << "    -i, --indent <size>  Indent size (in spaces), defaults to 4" << '\n';
         std::cout << "Supported file extensions:" << '\n';
         std::cout << "  .p(l)clhtml  HTML files" << '\n';
         std::cout << "  .p(l)clcss  CSS files" << '\n';
@@ -71,12 +91,12 @@ int main(int argc, char *argv[]) {
         std::string output = cli.output + "/" + config.name + ".";
         if (Generic::iequals(extension, "p(l)clhtml")) {
             output += "html";
-            std::string result = parseHTML(config);
+            std::string result = parseHTML(config, !cli.dontMinify, cli.indent);
             std::ofstream ofs(output);
             ofs << result;
         } else if (Generic::iequals(extension, "p(l)clcss")) {
             output += "css";
-            std::string result = parseCSS(config);
+            std::string result = parseCSS(config, !cli.dontMinify, cli.indent);
             std::ofstream ofs(output);
             ofs << result;
         } else {

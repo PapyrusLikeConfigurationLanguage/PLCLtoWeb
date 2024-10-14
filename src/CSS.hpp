@@ -8,4 +8,4 @@
 
 using namespace PLCL;
 
-std::string parseCSS(const Config::ConfigRoot &input);
+std::string parseCSS(const Config::ConfigRoot &input, bool minify, size_t indent);
