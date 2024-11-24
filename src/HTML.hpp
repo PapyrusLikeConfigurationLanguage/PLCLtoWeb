@@ -26,4 +26,13 @@ inline const std::string VOID_ELEMENTS[] = {
     "wbr"
 };
 
+enum VariableValueType {
+    LITERAL,
+    LITERAL_ARRAY,
+    ELEMENT,
+};
+
+typedef std::vector<std::string> LiteralArray;
+typedef std::variant<std::string, LiteralArray, Config::ConfigElement> VariableValue; // maybe make it lighter
+
 std::string parseHTML(const Config::ConfigRoot &input, bool minify, size_t indent);

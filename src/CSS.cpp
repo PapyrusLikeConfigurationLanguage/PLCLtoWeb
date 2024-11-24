@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include "CSS.hpp"
+#include "Generic.hpp"
 
 std::string elementInsideHelper(const Config::ConfigElement &input, bool minify, size_t indent) {
     std::string result;
@@ -24,15 +25,7 @@ std::string elementInsideHelper(const Config::ConfigElement &input, bool minify,
         if (!minify) {
             result += " ";
         }
-        if (std::holds_alternative<std::string>(attribute->value)) {
-            result += std::get<std::string>(attribute->value);
-        } else if (std::holds_alternative<int64_t>(attribute->value)) {
-            result += std::to_string(std::get<int64_t>(attribute->value));
-        } else if (std::holds_alternative<Generic::float64_t>(attribute->value)) {
-            result += std::to_string(std::get<Generic::float64_t>(attribute->value));
-        } else if (std::holds_alternative<bool>(attribute->value)) {
-            result += std::to_string(std::get<bool>(attribute->value));
-        }
+        result += attributeValueToString(attribute->value);
         result += ";";
         if (!minify) {
             result += "\n";
@@ -51,15 +44,7 @@ std::string elementHelper(const Config::ConfigElement &input, const std::string_
             break;
         }
         if (Generic::iequals(attribute->name, "_type")) {
-            if (std::holds_alternative<std::string>(attribute->value)) {
-                type = std::get<std::string>(attribute->value);
-            } else if (std::holds_alternative<int64_t>(attribute->value)) {
-                type = std::to_string(std::get<int64_t>(attribute->value));
-            } else if (std::holds_alternative<Generic::float64_t>(attribute->value)) {
-                type = std::to_string(std::get<Generic::float64_t>(attribute->value));
-            } else if (std::holds_alternative<bool>(attribute->value)) {
-                type = std::to_string(std::get<bool>(attribute->value));
-            }
+            type = attributeValueToString(attribute->value);
             break;
         }
     }
@@ -111,15 +96,7 @@ std::string elementHelper(const Config::ConfigElement &input, const std::string_
                 std::string templateName;
                 for (const auto &attribute : element->element->attributes) {
                     if (Generic::iequals(attribute->name, "Name")) {
-                        if (std::holds_alternative<std::string>(attribute->value)) {
-                            templateName = std::get<std::string>(attribute->value);
-                        } else if (std::holds_alternative<int64_t>(attribute->value)) {
-                            templateName = std::to_string(std::get<int64_t>(attribute->value));
-                        } else if (std::holds_alternative<Generic::float64_t>(attribute->value)) {
-                            templateName = std::to_string(std::get<Generic::float64_t>(attribute->value));
-                        } else if (std::holds_alternative<bool>(attribute->value)) {
-                            templateName = std::to_string(std::get<bool>(attribute->value));
-                        }
+                        templateName = attributeValueToString(attribute->value);
                     } else {
                         std::cerr << "(" << name << ")" << " Expected Name, got " << attribute->name << std::endl;
                     }
